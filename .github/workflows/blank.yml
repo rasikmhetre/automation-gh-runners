@@ -1,4 +1,4 @@
-            - name: Deploy self-hosted runners to EC2 (Spot/On-Demand)
+- name: Deploy self-hosted runners to EC2 (Spot/On-Demand)
   # You may pin to the exact commit or the version.
   # uses: NextChapterSoftware/ec2-action-builder@fac1c23f66a486e2033f003fde7ed5e81184c872
   uses: NextChapterSoftware/ec2-action-builder@v1.2
