@@ -1,87 +1,47 @@
-name: On-demand self-hosted AWS EC2 runner for GitHub Actions
-description: GitHub Action for automatic creation and registration AWS EC2 instance as a GitHub Actions self-hosted runner.
-author: Volodymyr Machula
-on: push
-branding:
-  icon: 'box'
-  color: 'orange'
-inputs:
-  mode:
-    description: >-
-      Specify here which mode you want to use:
-        - 'start' - to start a new runner;
-        - 'stop' - to stop the previously created runner.
-    required: true
-  github-token:
-    description: >-
-      GitHub Personal Access Token with the 'repo' scope assigned.
-    required: true
-  ec2-image-id:
-    description: >-
-      EC2 Image Id (AMI). The new runner will be launched from this image.
-      This input is required if you use the 'start' mode.
-    required: false
-  ec2-instance-type:
-    description: >-
-      EC2 Instance Type. 
-      This input is required if you use the 'start' mode.
-    required: false
-  subnet-id:
-    description: >-
-      VPC Subnet Id. The subnet should belong to the same VPC as the specified security group.
-      This input is required if you use the 'start' mode.
-    required: false
-  security-group-id:
-    description: >-
-      EC2 Security Group Id. 
-      The security group should belong to the same VPC as the specified subnet.
-      The runner doesn't require any inbound traffic. However, outbound traffic should be allowed.
-      This input is required if you use the 'start' mode.
-    required: false
-  label:
-    description: >-
-      Name of the unique label assigned to the runner.
-      The label is used to remove the runner from GitHub when the runner is not needed anymore.
-      This input is required if you use the 'stop' mode.
-    required: false
-  ec2-instance-id:
-    description: >-
-      EC2 Instance Id of the created runner.
-      The id is used to terminate the EC2 instance when the runner is not needed anymore.
-      This input is required if you use the 'stop' mode.
-    required: false
-  iam-role-name:
-    description: >-
-      IAM Role Name to attach to the created EC2 instance.
-      This requires additional permissions on the AWS role used to launch instances.
-    required: false
-  aws-resource-tags:
-    description: >-
-      Tags to attach to the launched EC2 instance and volume.
-      This must be a stringified array of AWS Tag objects, with both Key and Value fields,
-      for example: '[{"Key": "TagKey1", "Value": "TagValue1"}, {"Key": "TagKey2", "Value": "TagValue2"}]'
-    required: false
-    default: '[]'
-  runner-home-dir:
-    description: >-
-      Directory that contains actions-runner software and scripts. E.g. /home/runner/actions-runner.
-    required: false
-  pre-runner-script:
-    description: >-
-      Specifies bash commands to run before the runner starts. It's useful for installing dependencies with apt-get, yum, dnf, etc.
-    required: false
+# This is a basic workflow to help you get started with Actions
 
-outputs:
-  label:
-    description: >-
-      Name of the unique label assigned to the runner.
-      The label is used in two cases:
-      - to use as the input of 'runs-on' property for the following jobs;
-      - to remove the runner from GitHub when it is not needed anymore.
-  ec2-instance-id:
-    description: >-
-      EC2 Instance Id of the created runner.
-      The id is used to terminate the EC2 instance when the runner is not needed anymore.
-runs:
-  using: node20
-  main: ./dist/index.js
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+    start-runner:
+        timeout-minutes: 5              # normally it only takes 1-2 minutes
+        name: Start self-hosted EC2 runner   
+        runs-on: ubuntu-latest
+        permissions:
+          actions: write        
+        steps:      
+          - name: Start EC2 runner
+            id: start-ec2-runner
+            uses: NextChapterSoftware/ec2-action-builder@v1
+            with:
+              github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+              aws_access_key_id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
+              aws_secret_access_key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
+              aws_region: "ap-south-1"
+              ec2_instance_type: c5.large
+              ec2_ami_id: ami-05295b6e6c790593e
+              ec2_subnet_id: "subnet-02a9041dc662a6783"
+              ec2_security_group_id: "sg-011893c77e507ab5e"
+              ec2_instance_ttl: 40                # Optional (default is 60 minutes)
+              ec2_spot_instance_strategy: None    # Other options are: SpotOnly, BestEffort, MaxPerformance 
+
+    # Job that runs on the self-hosted runner 
+    run-build:
+        timeout-minutes: 1
+        needs:
+          - start-runner
+        runs-on: ${{ github.run_id }}          
+        steps:              
+          - run: env
