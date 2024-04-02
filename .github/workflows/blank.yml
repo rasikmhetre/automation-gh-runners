@@ -1,0 +1,39 @@
+            - name: Deploy self-hosted runners to EC2 (Spot/On-Demand)
+  # You may pin to the exact commit or the version.
+  # uses: NextChapterSoftware/ec2-action-builder@fac1c23f66a486e2033f003fde7ed5e81184c872
+  uses: NextChapterSoftware/ec2-action-builder@v1.2
+  with:
+    # AWS access key ID
+    aws_access_key_id: 
+    # AWS secret access key
+    aws_secret_access_key: 
+    # AWS Region
+    aws_region: 
+    # ARN of IAM role to assume
+    aws_iam_role_arn: # optional, default is 
+    # GitHub token
+    github_token: 
+    # GitHub action runner version
+    github_action_runner_version: # optional
+    # Ec2 instance type
+    ec2_instance_type: 
+    # Ec2 ami ID
+    ec2_ami_id: 
+    # IAM role for to associate with ec2 instance
+    ec2_instance_iam_role: # optional, default is 
+    # List of extra aws resource tags for ec2 instance
+    ec2_instance_tags: # optional, default is {}
+    # Maximum duration an EC2 instance is allowed to live in minute
+    ec2_instance_ttl: # optional, default is 60
+    # Security group id
+    ec2_security_group_id: 
+    # Subnet id
+    ec2_subnet_id: 
+    # Spot instance scheduling modes:
+  None -> (default) no spot instances, use on-demand
+  SpotOnly -> Strictly spot instances only
+  BestEffort -> Use spot instances whenever they are cheaper than on-demand
+  MaxPerformance -> Use the largest spot instance in same class for <= the on-demand price 
+
+    ec2_spot_instance_strategy: # optional, default is none
+          
