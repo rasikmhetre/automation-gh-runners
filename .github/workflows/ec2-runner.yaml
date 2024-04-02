@@ -29,7 +29,7 @@ jobs:
               github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
               aws_access_key_id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
               aws_secret_access_key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
-              aws_region: "ap-south-1"
+              aws_region: "us-east-1"
               ec2_instance_type: c5.large
               ec2_ami_id: ami-05295b6e6c790593e
               ec2_subnet_id: "subnet-02a9041dc662a6783"
