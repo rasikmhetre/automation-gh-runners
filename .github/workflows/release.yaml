@@ -4,10 +4,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  redis-eu1-Logprocessor-Enterprise-Tesseract-1:
     concurrency: release
     runs-on: 'ubuntu-latest'
     environment: 'redis/eu1-Logprocessor-Enterprise-Tesseract-1'
+    if: github.run_attempt == 1
+    steps:
+
+      - name: Unzip Asset
+        run: echo ${{ github.ref }}
+  eventstore-eu1-Logprocessor-Enterprise-Tesseract-1:
+    concurrency: release
+    runs-on: 'ubuntu-latest'
+    environment: 'eventstore/eu1-Logprocessor-Enterprise-Tesseract-1'
     if: github.run_attempt == 1
     steps:
 
