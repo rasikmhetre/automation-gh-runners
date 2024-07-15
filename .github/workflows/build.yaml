@@ -4,9 +4,7 @@ name: build-and-publish
 run-name: ${{ github.ref_name }}-${{ github.run_number }}
 
 on:
-  push:
-    branches:
-      - '*'
+  workflow_dispatch:
 
 jobs:
   docker-build-image:
