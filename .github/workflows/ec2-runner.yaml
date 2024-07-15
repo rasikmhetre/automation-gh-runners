@@ -13,6 +13,8 @@ jobs:
     concurrency:
       group: docker-build-image-${{ github.ref_name }}
     runs-on: 'ubuntu-22.04'
+    permissions:
+      contents: write
     steps:
       - name: Checkout Artifactory
         uses: actions/checkout@v3
@@ -25,7 +27,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1.1.4
         env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: github-${{ github.ref_name }}-${{ github.run_number }}
           release_name: github-${{ github.ref_name }}-${{ github.run_number }}
