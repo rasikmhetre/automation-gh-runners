@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  eventstore-eu1-Logprocessor-Enterprise-Tesseract-1:
+  eventstore-eu1-Es-Enterprise-Tesseract-1:
     concurrency: release
     runs-on: 'ubuntu-latest'
     environment: 'eventstore/eu1-Es-Enterprise-Tesseract-1'
