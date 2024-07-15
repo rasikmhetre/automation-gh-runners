@@ -2,12 +2,19 @@ name: eventstore
 
 on:
   workflow_dispatch:
+    inputs:
+      stackname:
+        description: Select stack for a deployment
+        type: choice
+        options:
+          - eu1-Es-Enterprise-Tesseract-1
+          - eu1-Es-Enterprise-Tesseract-2
 
 jobs:
-  eventstore-eu1-Es-Enterprise-Tesseract-1:
+  eventstore-release:
     concurrency: release
     runs-on: 'ubuntu-latest'
-    environment: 'eventstore/eu1-Es-Enterprise-Tesseract-1'
+    environment: eventstore/${{ inputs.stackname }}
     if: github.run_attempt == 1
     steps:
 
