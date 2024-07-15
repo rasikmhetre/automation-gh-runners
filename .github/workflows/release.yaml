@@ -12,4 +12,4 @@ jobs:
     steps:
 
       - name: Unzip Asset
-        run: echo ${{ github.ref_name }}
+        run: echo ${{ github.ref }}
