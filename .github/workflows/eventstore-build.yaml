@@ -1,7 +1,7 @@
 
 name: eventstore-build
 
-run-name: ${{ github.ref_name }}-${{ github.run_number }}
+run-name: eventstore-${{ github.ref_name }}-${{ github.run_number }}
 
 on:
   workflow_dispatch:
