@@ -5,10 +5,8 @@ on:
     inputs:
       stackname:
         description: Select stack for a deployment
-        type: choice
-        options:
-          - eu1-Es-Enterprise-Tesseract-1
-          - eu1-Es-Enterprise-Tesseract-2
+        type: environment
+        
 
 jobs:
   eventstore-release:
