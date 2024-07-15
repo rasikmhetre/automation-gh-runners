@@ -7,7 +7,7 @@ jobs:
   eventstore-eu1-Logprocessor-Enterprise-Tesseract-1:
     concurrency: release
     runs-on: 'ubuntu-latest'
-    environment: 'eventstore/eu1-Logprocessor-Enterprise-Tesseract-1'
+    environment: 'eventstore/eu1-Es-Enterprise-Tesseract-1'
     if: github.run_attempt == 1
     steps:
 
