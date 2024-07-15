@@ -12,7 +12,7 @@ jobs:
   eventstore-release:
     concurrency: release
     runs-on: 'ubuntu-latest'
-    environment: eventstore/${{ inputs.stackname }}
+    environment: ${{ inputs.stackname }}
     if: github.run_attempt == 1
     steps:
 
