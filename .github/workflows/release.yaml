@@ -1,0 +1,15 @@
+name: deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    concurrency: release
+    runs-on: 'ubuntu-latest'
+    environment: 'eventstore/eu1-Es-Enterprise-Tesseract-1'
+    if: github.run_attempt == 1
+    steps:
+
+      - name: Unzip Asset
+        run: echo ${{ github.event.release.name }}
