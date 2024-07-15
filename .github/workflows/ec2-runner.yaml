@@ -1,47 +1,26 @@
-# This is a basic workflow to help you get started with Actions
 
-name: CI
+name: build-and-publish
 
-# Controls when the workflow will run
+run-name: ${{ github.ref_name }}-${{ github.run_number }}
+
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - '*'
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-    start-runner:
-        timeout-minutes: 5              # normally it only takes 1-2 minutes
-        name: Start self-hosted EC2 runner   
-        runs-on: ubuntu-latest
-        permissions:
-          actions: write        
-        steps:      
-          - name: Start EC2 runner
-            id: start-ec2-runner
-            uses: NextChapterSoftware/ec2-action-builder@v1
-            with:
-              github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-              aws_access_key_id: ${{ secrets.DEPLOY_AWS_ACCESS_KEY_ID }}
-              aws_secret_access_key: ${{ secrets.DEPLOY_AWS_SECRET_ACCESS_KEY }}
-              aws_region: "us-east-1"
-              ec2_instance_type: c5.large
-              ec2_ami_id: ami-05fa00d4c63e32376
-              ec2_subnet_id: "subnet-02a9041dc662a6783"
-              ec2_security_group_id: "sg-011893c77e507ab5e"
-              ec2_instance_ttl: 40                # Optional (default is 60 minutes)
-              ec2_spot_instance_strategy: None    # Other options are: SpotOnly, BestEffort, MaxPerformance 
-
-    # Job that runs on the self-hosted runner 
-    run-build:
-        timeout-minutes: 1
-        needs:
-          - start-runner
-        runs-on: ${{ github.run_id }}          
-        steps:              
-          - run: env
+  docker-build-image:
+    concurrency:
+      group: docker-build-image-${{ github.ref_name }}
+    runs-on: 'ubuntu-22.04'
+    steps:
+      - name: Checkout Artifactory
+        uses: actions/checkout@v3
+ 
+      - name: Build Docker Image
+        run: |
+          docker build --force-rm=true -t github-${{ github.ref_name }}-${{ github.run_number }} .
+        
+                
+      
+    
