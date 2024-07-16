@@ -1,20 +1,35 @@
-name: eventstore-deploy
-run-name: ${{ github.ref_name }}-on-${{ inputs.stackname }}
+name: eventstore-deployment
+
 on:
   workflow_dispatch:
     inputs:
-      stackname:
-        description: Select stack for a deployment
-        type: environment
-        
+      environment_group:
+        description: 'Select the environment group to deploy'
+        required: true
+        type: choice
+        options:
+          - eventstore
+          - redis
 
 jobs:
-  eventstore-release:
-    concurrency: release
-    runs-on: 'ubuntu-latest'
-    environment: ${{ inputs.stackname }}
-    if: github.run_attempt == 1
+  deploy:
+    runs-on: ubuntu-latest
     steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
 
-      - name: Unzip Asset
-        run: echo ${{ github.ref }}
+      - name: Set environment list
+        id: set_envs
+        run: |
+          if [[ "${{ github.event.inputs.environment_group }}" == "eventstore" ]]; then
+            echo "ENVIRONMENTS=eventstore/eu1-Es-Enterprise-Tesseract-2 eventstore/eu1-Es-Swiggy-Tesseract-1 eventstore/eu1-Es-Enterprise-Tesseract-2" >> $GITHUB_ENV
+          elif [[ "${{ github.event.inputs.environment_group }}" == "redis" ]]; then
+            echo "ENVIRONMENTS=logprocessor/eu1-Logprocessor-Enterprise-Tesseract-1 logprocessor/eu1-Logprocessor-Enterprise-Tesseract-2" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy to environments
+        run: |
+          for env in ${{ env.ENVIRONMENTS }}; do
+            echo "Deploying to $env"
+            # Add your deployment script or steps here
+          done
