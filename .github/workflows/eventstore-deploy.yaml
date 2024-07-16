@@ -6,7 +6,8 @@ on:
       stackname:
         description: Select stack for a deployment
         type: choice
-        options: ${{ vars.EVENTSTORE }}
+        options: 
+          - ${{ env.EVENTSTORE }}
         
 
 jobs:
