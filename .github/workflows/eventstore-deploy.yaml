@@ -5,7 +5,8 @@ on:
     inputs:
       stackname:
         description: Select stack for a deployment
-        type: environment
+        type: choice
+        options: ${{ vars.eventstore }}
         
 
 jobs:
