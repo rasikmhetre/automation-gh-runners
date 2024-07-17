@@ -51,7 +51,7 @@ jobs:
           print(f"::set-output name=filtered_environments::{filtered_environments_str}")
 
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Deploy to environments
