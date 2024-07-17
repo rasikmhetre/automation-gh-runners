@@ -22,6 +22,7 @@ jobs:
       - name: Fetch and filter environments
         id: fetch_and_filter
         run: |
+          #!/usr/bin/python3
           import re
           import requests
           import os
