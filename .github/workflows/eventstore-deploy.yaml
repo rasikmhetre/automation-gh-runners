@@ -4,60 +4,27 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  get-selected:
+    name: Get Selected Checkboxes
     runs-on: ubuntu-latest
-
+    outputs: # This needs to be set if you want to consume the output on another job
+      selected: ${{ steps.get-selected-step.outputs.selected}}
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
+      - name: Get Selected
+        id: get-selected-step
+        uses: joao-zanutto/get-selected@v1
 
-      - name: Install requests
-        run: pip install requests
+      - name: Consume on the same job
+        run: echo ${{ steps.get-selected-step.outputs.selected }}
 
-      - name: Fetch and filter environments
-        id: fetch_and_filter
-        run: |
-          #!/usr/bin/python3
-          import re
-          import requests
-          import os
-
-          token = os.getenv("GITHUB_TOKEN")
-          repo = os.getenv("GITHUB_REPOSITORY")
-
-          def fetch_environments(repo, token):
-              url = f"https://api.github.com/repos/{repo}/environments"
-              headers = {"Authorization": f"token {token}"}
-              response = requests.get(url, headers=headers)
-              response.raise_for_status()
-              return [env['name'] for env in response.json()['environments']]
-
-          def filter_environments(environments, pattern):
-              regex = re.compile(pattern)
-              return [env for env in environments if regex.match(env)]
-
-          pattern = "^eventstore"  # Adjust your regex pattern as needed
-          environments = fetch_environments(repo, token)
-          filtered_environments = filter_environments(environments, pattern)
-
-          if not filtered_environments:
-              raise ValueError("No matching environments found.")
-
-          filtered_environments_str = ' '.join(filtered_environments)
-          print(f"::set-output name=filtered_environments::{filtered_environments_str}")
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-
-      - name: Deploy to environments
-        run: |
-          for env in ${{ steps.fetch_and_filter.outputs.filtered_environments }}; do
-            echo "Deploying to $env"
-            # Add your deployment script or steps here
-          done
+  consume-on-another-job:
+    runs-on: ubuntu-latest
+    name: Consume Output
+    needs: get-selected
+    steps:
+      - name: Print
+        run: echo ${{ needs.get-selected.outputs.selected }}
