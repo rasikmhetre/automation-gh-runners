@@ -2,13 +2,13 @@ name: Deploy Release
 
 on:
   workflow_dispatch:
-  inputs:
-      option1:
-        type: boolean
-      option2:
-        type: boolean
-      option3:
-        type: boolean
+    inputs:
+        option1:
+          type: boolean
+        option2:
+          type: boolean
+        option3:
+          type: boolean
 
 jobs:
   get-selected:
